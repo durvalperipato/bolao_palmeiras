@@ -39,7 +39,7 @@ class LoginPage extends StatelessWidget {
                 SizedBox(
                   height: screenSize.height * .4,
                   width: screenSize.width * .4,
-                  child: Image.asset('assets/images/escudos/palmeiras.png'),
+                  child: Image.asset('assets/images/palmeiras.png'),
                 ),
                 /*  Center(
                   child: SizedBox(

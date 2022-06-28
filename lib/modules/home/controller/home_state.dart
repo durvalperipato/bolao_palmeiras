@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 part of 'home_controller.dart';
 
-enum HomeStatus { initial, loading, sending, success, failure }
+enum HomeStatus { initial, loading, success, complete, failure }
 
 class HomeState extends Equatable {
   final List<ApostaModel>? apostas;

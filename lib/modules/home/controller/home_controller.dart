@@ -43,7 +43,13 @@ class HomeController extends Cubit<HomeState> {
     }
   } */
 
-  void listenPartida() {
+  void listenDados() {
+    emit(state.copyWith(status: HomeStatus.loading));
+    _listenPartida();
+    _listenApostas();
+  }
+
+  void _listenPartida() {
     try {
       var snapshot = _jogoService.snapshotPartida();
       snapshot.listen((partidaMap) async {
@@ -54,7 +60,7 @@ class HomeController extends Cubit<HomeState> {
           partida.imageUrlVisitante =
               await _buscarEscudoDoTime(time: partida.visitante.toLowerCase());
 
-          emit(state.copyWith(partida: partida));
+          emit(state.copyWith(status: HomeStatus.complete, partida: partida));
         }
       });
     } catch (e, s) {
@@ -65,7 +71,7 @@ class HomeController extends Cubit<HomeState> {
     }
   }
 
-  void listenApostas() {
+  void _listenApostas() {
     try {
       var snapshot = _jogoService.snapshotApostas();
       snapshot.listen((apostasMap) async {

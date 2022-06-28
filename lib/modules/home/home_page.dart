@@ -1,4 +1,6 @@
 import 'package:bolao_palmeiras/app/models/partida_model.dart';
+import 'package:bolao_palmeiras/modules/home/widgets/banner_campeonato.dart';
+import 'package:bolao_palmeiras/modules/home/widgets/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,8 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    widget.controller.listenPartida();
-    widget.controller.listenApostas();
+    widget.controller.listenDados();
     super.initState();
   }
 
@@ -48,10 +49,13 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         } else if (state.status == HomeStatus.success) {
+          ScaffoldMessenger.of(context).clearSnackBars();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message ?? ''),
-              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 1),
+              elevation: 5,
+              content: SizedBox(height: 100, child: Text(state.message ?? '')),
+              backgroundColor: Colors.orange,
             ),
           );
         }
@@ -71,39 +75,17 @@ class _HomePageState extends State<HomePage> {
               BlocSelector<HomeController, HomeState, PartidaModel?>(
                 bloc: widget.controller,
                 selector: (state) => state.partida,
-                builder: (context, partida) => Column(
-                  children: [
-                    AppBarJogo(
-                      campeonato: partida?.campeonato ?? 'CAMPEONATO',
-                      controller: widget.controller,
-                    ),
-                    _jogoWidget(partida: partida),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: SizedBox(
-                        height: 23,
-                        width: 188,
-                        child: Center(
-                          child: Text(
-                            "${partida?.data ?? '--/--/----'} - ${partida?.hora ?? "--:--"}",
-                            style: const TextStyle(
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ),
+                builder: (context, partida) => SizedBox(
+                  height: 256,
+                  child: Stack(
+                    children: [
+                      AppBarJogo(
+                        controller: widget.controller,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: SizedBox(
-                        height: 23,
-                        child: Center(
-                          child: Text(
-                              "R\$ ${partida?.valorAposta.toString() ?? "0"},00"),
-                        ),
-                      ),
-                    ),
-                  ],
+                      _jogoWidget(partida: partida),
+                      BannerCampeonato(campeonato: partida?.campeonato)
+                    ],
+                  ),
                 ),
               ),
               Container(
@@ -116,8 +98,12 @@ class _HomePageState extends State<HomePage> {
                   bloc: widget.controller,
                   selector: (state) => state.apostas,
                   builder: (context, apostas) {
-                    return Apostas(
-                      apostas: apostas ?? [],
+                    return Visibility(
+                      visible: apostas?.isNotEmpty ?? true,
+                      replacement: const EmptyState(),
+                      child: Apostas(
+                        apostas: apostas ?? [],
+                      ),
                     );
                   }),
               Container(
@@ -170,146 +156,184 @@ class _HomePageState extends State<HomePage> {
     String mandante = partida?.mandante ?? '';
     String visitante = partida?.visitante ?? '';
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 32, left: 0, right: 0),
+    return Positioned(
+      top: 96,
+      left: 0,
+      right: 0,
       child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          image: const DecorationImage(
+        height: 160,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
             fit: BoxFit.cover,
-            //opacity: 0.5,
             image: AssetImage('assets/images/fundo_partida.jpg'),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.4),
-              blurRadius: 2,
-              offset: const Offset(0, 2),
-            ),
-          ],
         ),
         child: Form(
           key: _formKey,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 70,
-                    width: 70,
-                    child: Image.network(partida?.imageUrlMandante ?? '',
-                        errorBuilder: (context, error, stackTrace) => Center(
-                                child: Text(
-                              mandante.toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 10,
-                                  color: Colors.white),
-                            ))),
-                  ),
-                  const SizedBox(
-                    width: 26,
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white,
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 70,
+                      width: 70,
+                      child: Image.network(partida?.imageUrlMandante ?? '',
+                          errorBuilder: (context, error, stackTrace) => Center(
+                                  child: Text(
+                                mandante.toUpperCase(),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                    color: Colors.white),
+                              ))),
                     ),
-                    height: 50,
-                    width: 50,
-                    child: TextFormField(
-                      controller: _mandanteEC,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            color: Colors.black.withOpacity(0.3),
+                    const SizedBox(
+                      width: 26,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0, 3),
+                            color: Colors.black87,
+                            blurRadius: 4,
                           ),
-                        ),
+                        ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const SizedBox(
-                    height: 50,
-                    width: 16,
-                    child: Center(
-                      child: Text(
-                        'x',
-                        style: TextStyle(fontSize: 24),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Container(
-                    height: 50,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: Colors.white,
-                    ),
-                    child: TextFormField(
-                      controller: _visitanteEC,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      decoration: InputDecoration(
-                        errorStyle: const TextStyle(
-                            height: 0, fontSize: 0, color: Colors.transparent),
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: const BorderSide(
-                            color: Colors.green,
-                          ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5),
-                          borderSide: BorderSide(
-                            color: Colors.black.withOpacity(0.3),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 26,
-                  ),
-                  SizedBox(
-                    height: 70,
-                    width: 70,
-                    child: Image.network(
-                      partida?.imageUrlVisitante ?? '',
-                      errorBuilder: (context, error, stackTrace) => Center(
-                          child: Text(
-                        visitante.toUpperCase(),
+                      height: 50,
+                      width: 50,
+                      child: TextFormField(
+                        controller: _mandanteEC,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 10,
-                            color: Colors.white),
-                      )),
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                              color: Colors.black.withOpacity(0.3),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-
-                    /* Image.asset(
-                      'assets/images/escudos/${visitante.toLowerCase()}.png',
-                      
-                    ), */
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    const SizedBox(
+                      height: 50,
+                      width: 16,
+                      child: Center(
+                        child: Text(
+                          'x',
+                          style: TextStyle(fontSize: 24),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.white,
+                        boxShadow: const [
+                          BoxShadow(
+                            offset: Offset(0, 3),
+                            color: Colors.black87,
+                            blurRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: TextFormField(
+                        controller: _visitanteEC,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        decoration: InputDecoration(
+                          errorStyle: const TextStyle(
+                              height: 0,
+                              fontSize: 0,
+                              color: Colors.transparent),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: const BorderSide(
+                              color: Colors.green,
+                            ),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5),
+                            borderSide: BorderSide(
+                              color: Colors.black.withOpacity(0.3),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 26,
+                    ),
+                    SizedBox(
+                      height: 70,
+                      width: 70,
+                      child: Image.network(
+                        partida?.imageUrlVisitante ?? '',
+                        errorBuilder: (context, error, stackTrace) => Center(
+                          child: Text(
+                            visitante.toUpperCase(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4.0),
+                child: SizedBox(
+                  height: 23,
+                  width: 188,
+                  child: Center(
+                    child: Text(
+                      "${partida?.data ?? ''} - ${partida?.hora ?? ""}",
+                      style: const TextStyle(
+                          fontFamily: 'Antiga',
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white70),
+                    ),
                   ),
-                ],
+                ),
+              ),
+              SizedBox(
+                height: 23,
+                child: Center(
+                  child: Text(
+                    "R\$ ${partida?.valorAposta.toString() ?? "0"},00",
+                    style: const TextStyle(
+                        fontFamily: 'Antiga',
+                        color: Colors.white70,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
               ),
             ],
           ),
