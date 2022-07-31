@@ -16,8 +16,8 @@ class EmptyState extends StatelessWidget {
               ),
               Image.asset(
                 "assets/images/empty_state.png",
-                height: 120,
-                width: 120,
+                height: 180,
+                width: 180,
               ),
               const SizedBox(
                 height: 36,
@@ -25,8 +25,17 @@ class EmptyState extends StatelessWidget {
               const Text(
                 'NENHUMA APOSTA REALIZADA!',
                 style: TextStyle(
-                    fontFamily: 'Antiga', fontWeight: FontWeight.bold),
-              )
+                    fontFamily: 'Antiga',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+              const Text(
+                'Insira seu placar',
+                style: TextStyle(
+                  fontFamily: 'Antiga',
+                  fontSize: 14,
+                ),
+              ),
             ],
           ),
         ),

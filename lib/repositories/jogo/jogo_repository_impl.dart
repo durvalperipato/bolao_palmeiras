@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bolao_palmeiras/app/entities/aposta.dart';
+import 'package:bolao_palmeiras/core/constants/constants.dart';
 import 'package:bolao_palmeiras/core/database/database.dart';
 import 'package:bolao_palmeiras/repositories/jogo/jogo_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,15 +16,15 @@ class JogoRepositoryImpl implements JogoRepository {
     var database = _database.getInstance();
     try {
       if (database != null) {
-        var document = await database.collection('bolao').doc('partida').get();
+        var document =
+            await database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.PARTIDA).get();
 
         return document.data() as Map<String, dynamic>;
       } else {
         throw FirebaseException(plugin: 'Erro ao buscar partida');
       }
     } catch (e, s) {
-      log('Erro ao buscar os dados da partida no banco de dados',
-          error: e, stackTrace: s);
+      log('Erro ao buscar os dados da partida no banco de dados', error: e, stackTrace: s);
       throw Exception();
     }
   }
@@ -32,7 +33,7 @@ class JogoRepositoryImpl implements JogoRepository {
   Stream<DocumentSnapshot<Map<String, dynamic>>> snapshotPartida() {
     var database = _database.getInstance();
     if (database != null) {
-      return database.collection('bolao').doc('partida').snapshots();
+      return database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.PARTIDA).snapshots();
     } else {
       throw NullThrownError();
     }
@@ -42,7 +43,7 @@ class JogoRepositoryImpl implements JogoRepository {
   Stream<DocumentSnapshot<Map<String, dynamic>>> snapshotApostas() {
     var database = _database.getInstance();
     if (database != null) {
-      return database.collection('bolao').doc('apostas').snapshots();
+      return database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.APOSTAS).snapshots();
     } else {
       throw NullThrownError();
     }
@@ -56,7 +57,7 @@ class JogoRepositoryImpl implements JogoRepository {
         if (aposta.user == '') {
           aposta.user = 'ERRO FDP';
         }
-        await database.collection('bolao').doc('apostas').set({
+        await database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.APOSTAS).set({
           aposta.user: {
             "mandante": aposta.placarMandante,
             "visitante": aposta.placarVisitante,
@@ -65,8 +66,7 @@ class JogoRepositoryImpl implements JogoRepository {
         }, SetOptions(merge: true));
       }
     } catch (e) {
-      throw FirebaseException(
-          plugin: 'Erro ao realizar aposta para o usuário: ${aposta.user}');
+      throw FirebaseException(plugin: 'Erro ao realizar aposta para o usuário: ${aposta.user}');
     }
   }
 
@@ -75,7 +75,8 @@ class JogoRepositoryImpl implements JogoRepository {
     var database = _database.getInstance();
     List<Aposta> apostas = [];
     if (database != null) {
-      var document = await database.collection('bolao').doc('apostas').get();
+      var document =
+          await database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.APOSTAS).get();
       if (document.data() != null) {
         Map<String, dynamic>? response = document.data();
         if (response != null) {

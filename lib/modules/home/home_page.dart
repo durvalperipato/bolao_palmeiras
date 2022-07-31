@@ -181,16 +181,19 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(
                       height: 70,
                       width: 70,
-                      child: Image.network(partida?.imageUrlMandante ?? '',
-                          errorBuilder: (context, error, stackTrace) => Center(
-                                  child: Text(
-                                mandante.toUpperCase(),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 10,
-                                    color: Colors.white),
-                              ))),
+                      child: Image.network(
+                        partida?.imageUrlMandante ?? '',
+                        errorBuilder: (context, error, stackTrace) => Center(
+                          child: Text(
+                            mandante.toUpperCase(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 10,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(
                       width: 26,
@@ -315,7 +318,6 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       "${partida?.data ?? ''} - ${partida?.hora ?? ""}",
                       style: const TextStyle(
-                          fontFamily: 'Antiga',
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.bold,
                           color: Colors.white70),
@@ -329,9 +331,7 @@ class _HomePageState extends State<HomePage> {
                   child: Text(
                     "R\$ ${partida?.valorAposta.toString() ?? "0"},00",
                     style: const TextStyle(
-                        fontFamily: 'Antiga',
-                        color: Colors.white70,
-                        fontWeight: FontWeight.bold),
+                        color: Colors.white70, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

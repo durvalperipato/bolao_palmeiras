@@ -45,7 +45,7 @@ class BannerCampeonato extends StatelessWidget {
                 color: Colors.black.withOpacity(
                   .6,
                 ),
-                letterSpacing: 5,
+                letterSpacing: 2,
                 fontWeight: FontWeight.bold,
               ),
             ),

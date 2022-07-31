@@ -1,4 +1,5 @@
 import 'package:bolao_palmeiras/app/entities/campeonato.dart';
+import 'package:bolao_palmeiras/core/constants/constants.dart';
 import 'package:bolao_palmeiras/core/database/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -17,11 +18,9 @@ class AdminRepositoryImpl implements AdminRepository {
 
     try {
       if (database != null) {
-        var dados = await database.collection('bolao').doc('dados').get();
+        var dados = await database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.DADOS).get();
         var campeonatos = dados.data()!['campeonatos'] as List<dynamic>;
-        return campeonatos
-            .map<Campeonato>((nome) => Campeonato(nome: nome))
-            .toList();
+        return campeonatos.map<Campeonato>((nome) => Campeonato(nome: nome)).toList();
       }
       throw Exception();
     } catch (e) {
@@ -35,7 +34,7 @@ class AdminRepositoryImpl implements AdminRepository {
 
     try {
       if (database != null) {
-        var dados = await database.collection('bolao').doc('dados').get();
+        var dados = await database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.DADOS).get();
         var times = dados.data()!['times'] as List<dynamic>;
         return times.map<Time>((nome) => Time(nome: nome)).toList();
       }
@@ -51,7 +50,7 @@ class AdminRepositoryImpl implements AdminRepository {
 
     try {
       if (database != null) {
-        var document = database.collection('bolao').doc('partida');
+        var document = database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.PARTIDA);
         document.set(
           partida.toMap(),
           SetOptions(merge: true),

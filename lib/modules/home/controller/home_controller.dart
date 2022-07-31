@@ -30,19 +30,6 @@ class HomeController extends Cubit<HomeState> {
     avatar = photoURL ?? '';
   }
 
-  /*  Future<void> buscarPartida() async {
-    try {
-      emit(state.copyWith(status: HomeStatus.loading));
-      var partida = await _jogoService.buscarJogo();
-      
-      emit(state.copyWith(partida: partida));
-    } catch (e, s) {
-      log('Erro ao buscar partida', error: e, stackTrace: s);
-      emit(state.copyWith(
-          status: HomeStatus.failure, message: 'Erro ao buscar partida'));
-    }
-  } */
-
   void listenDados() {
     emit(state.copyWith(status: HomeStatus.loading));
     _listenPartida();
@@ -66,8 +53,7 @@ class HomeController extends Cubit<HomeState> {
     } catch (e, s) {
       log('Erro ao atualizar partida em tempo real', error: e, stackTrace: s);
       emit(state.copyWith(
-          status: HomeStatus.failure,
-          message: 'Erro ao atualizar partida em tempo real'));
+          status: HomeStatus.failure, message: 'Erro ao atualizar partida em tempo real'));
     }
   }
 
@@ -84,8 +70,7 @@ class HomeController extends Cubit<HomeState> {
     } catch (e, s) {
       log('Erro ao atualizar partida em tempo real', error: e, stackTrace: s);
       emit(state.copyWith(
-          status: HomeStatus.failure,
-          message: 'Erro ao atualizar partida em tempo real'));
+          status: HomeStatus.failure, message: 'Erro ao atualizar partida em tempo real'));
     }
   }
 
@@ -98,8 +83,7 @@ class HomeController extends Cubit<HomeState> {
       emit(state.copyWith(apostas: apostas));
     } catch (e) {
       emit(state.copyWith(
-          status: HomeStatus.failure,
-          message: 'Erro ao atualizar lista de apostas'));
+          status: HomeStatus.failure, message: 'Erro ao atualizar lista de apostas'));
     }
   }
 
@@ -122,24 +106,19 @@ class HomeController extends Cubit<HomeState> {
           _verificarHoraDaAposta(partida: partida)) {
         await _jogoService.addBet(apostaModel: aposta);
 
-        emit(state.copyWith(
-            status: HomeStatus.success, message: 'Placar enviado com sucesso'));
+        emit(state.copyWith(status: HomeStatus.success, message: 'Placar enviado com sucesso'));
       } else {
         emit(state.copyWith(
-            status: HomeStatus.failure,
-            message: 'Aposta igual e/ou fora do horário'));
+            status: HomeStatus.failure, message: 'Aposta igual e/ou fora do horário'));
       }
     } catch (e, s) {
       log('Erro ao enviar aposta', error: e, stackTrace: s);
-      emit(state.copyWith(
-          status: HomeStatus.failure,
-          message: 'Erro ao enviar aposta\n$e\n$s'));
+      emit(state.copyWith(status: HomeStatus.failure, message: 'Erro ao enviar aposta\n$e\n$s'));
     }
   }
 
   bool _verificarAposta(
-      {required ApostaModel aposta,
-      required List<ApostaModel> apostasRealizadas}) {
+      {required ApostaModel aposta, required List<ApostaModel> apostasRealizadas}) {
     var confirmado = true;
 
     for (var apostaAnterior in apostasRealizadas) {
@@ -182,8 +161,7 @@ class HomeController extends Cubit<HomeState> {
       return await _jogoService.buscarEscudo(time: time);
     } catch (e) {
       emit(state.copyWith(
-          status: HomeStatus.failure,
-          message: 'Erro ao buscar escudo do time $time'));
+          status: HomeStatus.failure, message: 'Erro ao buscar escudo do time $time'));
       return null;
     }
   }
