@@ -1,6 +1,5 @@
 import 'package:bolao_palmeiras/app/models/campeonato_model.dart';
 import 'package:bolao_palmeiras/modules/admin/controller/admin_controller.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -10,8 +9,7 @@ class AdminPage extends StatefulWidget {
   final AdminController controller;
   final int? valorAposta;
 
-  const AdminPage(
-      {Key? key, required AdminController adminController, this.valorAposta})
+  const AdminPage({Key? key, required AdminController adminController, this.valorAposta})
       : controller = adminController,
         super(key: key);
 
@@ -35,8 +33,9 @@ class _AdminPageState extends State<AdminPage> {
 
   @override
   void initState() {
+    widget.controller.buscarDados(widget.valorAposta);
+
     super.initState();
-    widget.controller.buscarDados();
   }
 
   @override
@@ -55,8 +54,7 @@ class _AdminPageState extends State<AdminPage> {
         if (state.status == AdminStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text(
-                  'Não foi possível carregar os dados dos times e campeonatos'),
+              content: Text('Não foi possível carregar os dados dos times e campeonatos'),
             ),
           );
         }
@@ -64,6 +62,7 @@ class _AdminPageState extends State<AdminPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Admin Page'),
+          backgroundColor: Colors.green,
         ),
         body: Padding(
           padding: const EdgeInsets.all(32.0),
@@ -73,8 +72,7 @@ class _AdminPageState extends State<AdminPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  BlocSelector<AdminController, AdminState,
-                          List<CampeonatoModel>>(
+                  BlocSelector<AdminController, AdminState, List<CampeonatoModel>>(
                       bloc: widget.controller,
                       selector: ((state) => state.campeonatos),
                       builder: (context, campeonatos) {
@@ -98,8 +96,7 @@ class _AdminPageState extends State<AdminPage> {
                                   value: campeonato,
                                   items: campeonatos
                                       .map((campeonato) => DropdownMenuItem(
-                                          value: campeonato.nome,
-                                          child: Text(campeonato.nome)))
+                                          value: campeonato.nome, child: Text(campeonato.nome)))
                                       .toList(),
                                   onChanged: (value) {}),
                             ),
@@ -130,8 +127,7 @@ class _AdminPageState extends State<AdminPage> {
                                   value: timeMandante,
                                   items: times
                                       .map((time) => DropdownMenuItem(
-                                          value: time.nome,
-                                          child: Text(time.nome)))
+                                          value: time.nome, child: Text(time.nome)))
                                       .toList(),
                                   onChanged: (value) {}),
                             ),
@@ -160,8 +156,7 @@ class _AdminPageState extends State<AdminPage> {
                                   value: timeVisitante,
                                   items: times
                                       .map((time) => DropdownMenuItem(
-                                          value: time.nome,
-                                          child: Text(time.nome)))
+                                          value: time.nome, child: Text(time.nome)))
                                       .toList(),
                                   onChanged: (value) {}),
                             ),
@@ -187,8 +182,7 @@ class _AdminPageState extends State<AdminPage> {
                               lastDate: DateTime(2040),
                             );
                             if (date != null) {
-                              _dataEC.text =
-                                  "${date.day}/${date.month}/${date.year}";
+                              _dataEC.text = "${date.day}/${date.month}/${date.year}";
                               setState(() {});
                             }
                           },
@@ -251,31 +245,51 @@ class _AdminPageState extends State<AdminPage> {
                       const SizedBox(
                         width: 16,
                       ),
-                      Expanded(
-                        child: TextFormField(
-                          controller: _valorEC,
-                          keyboardType: TextInputType.number,
-                        ),
+                      BlocSelector<AdminController, AdminState, int>(
+                        bloc: widget.controller,
+                        selector: (state) => state.betValue,
+                        builder: (context, betValue) {
+                          _valorEC.text = betValue.toString();
+                          return SizedBox(
+                            width: 50,
+                            child: TextField(
+                              readOnly: true,
+                              textAlign: TextAlign.center,
+                              controller: _valorEC,
+                              keyboardType: TextInputType.number,
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 20),
+                      IconButton(
+                        onPressed: () => widget.controller.incrementBetValue(_valorEC.text),
+                        icon: const Icon(Icons.add),
+                      ),
+                      const SizedBox(width: 20),
+                      IconButton(
+                        onPressed: () => widget.controller.decrementBetValue(_valorEC.text),
+                        icon: const Icon(Icons.remove),
                       ),
                     ],
                   ),
-                  Image.network(imageUrl),
+                  /*  Image.network(imageUrl), */
                   const SizedBox(
                     height: 32,
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () async {
-                      final storageRef = FirebaseStorage.instance.ref();
-                      final pathReference = await storageRef
-                          .child("escudos/palmeiras.png")
-                          .getDownloadURL();
+                      //TODO Fazer o upload de escudos
+                      /* final storageRef = FirebaseStorage.instance.ref();
+                      final pathReference =
+                          await storageRef.child("escudos/palmeiras.png").getDownloadURL();
 
                       setState(() {
                         imageUrl = pathReference;
-                      });
+                      }); */
 
-                      /*  var formValid =
-                          _formKey.currentState?.validate() ?? false;
+                      var formValid = _formKey.currentState?.validate() ?? false;
                       if (formValid) {
                         widget.controller.enviarDados(
                             campeonato: campeonato,
@@ -283,10 +297,12 @@ class _AdminPageState extends State<AdminPage> {
                             hora: _horaEC.text,
                             mandante: timeMandante,
                             visitante: timeVisitante,
-                            valorAposta: int.parse(_valorEC.text)); 
-                      } */
+                            valorAposta: int.parse(_valorEC.text));
+                      }
                     },
-                    child: const Text('Enviar'),
+                    child: const Text(
+                      'Enviar',
+                    ),
                   ),
                 ],
               ),

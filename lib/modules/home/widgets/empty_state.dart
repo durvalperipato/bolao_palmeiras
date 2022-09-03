@@ -24,11 +24,9 @@ class EmptyState extends StatelessWidget {
               ),
               const Text(
                 'NENHUMA APOSTA REALIZADA!',
-                style: TextStyle(
-                    fontFamily: 'Antiga',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+                style: TextStyle(fontFamily: 'Antiga', fontSize: 18, fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 20),
               const Text(
                 'Insira seu placar',
                 style: TextStyle(

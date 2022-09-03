@@ -3,6 +3,7 @@ import 'package:bolao_palmeiras/modules/home/widgets/banner_campeonato.dart';
 import 'package:bolao_palmeiras/modules/home/widgets/empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../app/models/aposta_model.dart';
 import 'controller/home_controller.dart';
@@ -81,6 +82,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       AppBarJogo(
                         controller: widget.controller,
+                        partida: partida,
                       ),
                       _jogoWidget(partida: partida),
                       BannerCampeonato(campeonato: partida?.campeonato)
@@ -95,17 +97,18 @@ class _HomePageState extends State<HomePage> {
                 width: MediaQuery.of(context).size.width,
               ),
               BlocSelector<HomeController, HomeState, List<ApostaModel>?>(
-                  bloc: widget.controller,
-                  selector: (state) => state.apostas,
-                  builder: (context, apostas) {
-                    return Visibility(
-                      visible: apostas?.isNotEmpty ?? true,
-                      replacement: const EmptyState(),
-                      child: Apostas(
-                        apostas: apostas ?? [],
-                      ),
-                    );
-                  }),
+                bloc: widget.controller,
+                selector: (state) => state.apostas,
+                builder: (context, apostas) {
+                  return Visibility(
+                    visible: apostas?.isNotEmpty ?? true,
+                    replacement: const EmptyState(),
+                    child: Apostas(
+                      apostas: apostas ?? [],
+                    ),
+                  );
+                },
+              ),
               Container(
                 padding: const EdgeInsets.only(top: 16),
                 color: Colors.black,
@@ -113,15 +116,12 @@ class _HomePageState extends State<HomePage> {
                 width: MediaQuery.of(context).size.width,
               ),
               Padding(
-                padding: const EdgeInsets.only(
-                    top: 9.0, bottom: 9, left: 20, right: 20),
+                padding: const EdgeInsets.only(top: 9.0, bottom: 9, left: 20, right: 20),
                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.green),
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                     onPressed: () async {
-                      if (!((_mandanteEC.text.isEmpty ||
-                              int.tryParse(_mandanteEC.text) == null) ||
-                          (_visitanteEC.text.isEmpty ||
-                              int.tryParse(_visitanteEC.text) == null))) {
+                      if (!((_mandanteEC.text.isEmpty || int.tryParse(_mandanteEC.text) == null) ||
+                          (_visitanteEC.text.isEmpty || int.tryParse(_visitanteEC.text) == null))) {
                         await widget.controller.bet(
                           user: widget.controller.userName,
                           placarMandante: _mandanteEC.text,
@@ -132,8 +132,7 @@ class _HomePageState extends State<HomePage> {
                         _mandanteEC.clear();
                       } else {
                         ScaffoldMessenger.of(context).clearSnackBars();
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
+                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text(
                               'Não foi possível enviar a aposta - Placar igual ou número inválido'),
                           backgroundColor: Colors.red,
@@ -188,16 +187,12 @@ class _HomePageState extends State<HomePage> {
                             mandante.toUpperCase(),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
-                                color: Colors.white),
+                                fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      width: 26,
-                    ),
+                    const SizedBox(width: 26),
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
@@ -215,10 +210,8 @@ class _HomePageState extends State<HomePage> {
                       child: TextFormField(
                         controller: _mandanteEC,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
@@ -261,16 +254,12 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: TextFormField(
                         controller: _visitanteEC,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
-                          errorStyle: const TextStyle(
-                              height: 0,
-                              fontSize: 0,
-                              color: Colors.transparent),
+                          errorStyle:
+                              const TextStyle(height: 0, fontSize: 0, color: Colors.transparent),
                           errorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5),
                             borderSide: const BorderSide(
@@ -299,9 +288,7 @@ class _HomePageState extends State<HomePage> {
                             visitante.toUpperCase(),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 10,
-                                color: Colors.white),
+                                fontWeight: FontWeight.bold, fontSize: 10, color: Colors.white),
                           ),
                         ),
                       ),
@@ -330,8 +317,7 @@ class _HomePageState extends State<HomePage> {
                 child: Center(
                   child: Text(
                     "R\$ ${partida?.valorAposta.toString() ?? "0"},00",
-                    style: const TextStyle(
-                        color: Colors.white70, fontWeight: FontWeight.bold),
+                    style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

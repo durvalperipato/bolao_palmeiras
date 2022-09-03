@@ -15,7 +15,7 @@ class AdminController extends Cubit<AdminState> {
       : _adminService = adminService,
         super(AdminState.initial());
 
-  Future<void> buscarDados() async {
+  Future<void> buscarDados([int? betValue = 0]) async {
     emit(state.copyWith(status: AdminStatus.loading));
     try {
       var campeonatos = await _adminService.buscarCampeonatos();
@@ -27,10 +27,9 @@ class AdminController extends Cubit<AdminState> {
         (a, b) => a.nome.compareTo(b.nome),
       );
       emit(state.copyWith(
-          status: AdminStatus.success, campeonatos: campeonatos, times: times));
+          status: AdminStatus.success, campeonatos: campeonatos, times: times, betValue: betValue));
     } catch (e) {
-      emit(state
-          .copyWith(status: AdminStatus.failure, campeonatos: [], times: []));
+      emit(state.copyWith(status: AdminStatus.failure, campeonatos: [], times: []));
     }
   }
 
@@ -55,5 +54,17 @@ class AdminController extends Cubit<AdminState> {
     } catch (e) {
       emit(state.copyWith(status: AdminStatus.failure));
     }
+  }
+
+  void incrementBetValue(String value) {
+    int newValue = int.parse(value);
+    newValue += 15;
+    emit(state.copyWith(betValue: newValue));
+  }
+
+  void decrementBetValue(String value) {
+    int newValue = int.parse(value);
+    newValue -= 15;
+    emit(state.copyWith(betValue: newValue));
   }
 }

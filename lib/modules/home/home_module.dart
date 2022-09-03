@@ -6,10 +6,8 @@ import 'home_page.dart';
 
 class HomeModule extends Module {
   @override
-  List<Bind> get binds => [
-        BlocBind.lazySingleton(
-            (i) => HomeController(jogoService: i(), authService: i()))
-      ];
+  List<Bind> get binds =>
+      [BlocBind.lazySingleton((i) => HomeController(jogoService: i(), authService: i()))];
 
   @override
   List<ModularRoute> get routes => [
@@ -20,9 +18,10 @@ class HomeModule extends Module {
 
           final user = args.data?["name"] as String? ?? 'Erro';
           final photoURL = args.data?["avatar"] as String?;
+          final isAdmin = args.data?["admin"] as bool;
 
           return HomePage(
-            controller: Modular.get()..setUser(user: user, photoURL: photoURL),
+            controller: Modular.get()..setUser(user: user, photoURL: photoURL, isAdmin: isAdmin),
           );
         })
       ];

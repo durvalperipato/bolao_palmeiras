@@ -13,7 +13,10 @@ class _ApostasState extends State<Apostas> {
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.separated(
-        separatorBuilder: (context, index) => const Divider(thickness: 2),
+        separatorBuilder: (context, index) => Container(
+          height: 1,
+          color: Colors.grey,
+        ),
         itemCount: widget.apostas.length,
         itemBuilder: (context, index) {
           List<String> name = widget.apostas.elementAt(index).user.split(' ');
@@ -24,8 +27,7 @@ class _ApostasState extends State<Apostas> {
             subtitle: Text(lastName),
             leading: CircleAvatar(
               backgroundColor: Colors.green,
-              backgroundImage:
-                  NetworkImage(widget.apostas.elementAt(index).avatarURL ?? ''),
+              backgroundImage: NetworkImage(widget.apostas.elementAt(index).avatarURL ?? ''),
             ),
             trailing: SizedBox(
               width: 160,
@@ -34,19 +36,13 @@ class _ApostasState extends State<Apostas> {
                   SizedBox(
                       width: 70,
                       child: Center(
-                          child: Text(widget.apostas
-                              .elementAt(index)
-                              .placarMandante
-                              .toString()))),
+                          child: Text(widget.apostas.elementAt(index).placarMandante.toString()))),
                   const SizedBox(width: 16, child: Center(child: Text('x'))),
                   SizedBox(
                     width: 70,
                     child: Center(
                       child: Text(
-                        widget.apostas
-                            .elementAt(index)
-                            .placarVisitante
-                            .toString(),
+                        widget.apostas.elementAt(index).placarVisitante.toString(),
                       ),
                     ),
                   ),

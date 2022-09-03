@@ -15,9 +15,11 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user != null) {
+        final bool admin = user.displayName! == 'Durval Peripato Neto';
         Modular.to.pushNamed('/home', arguments: {
           "name": user.displayName,
           "user_id": user.uid,
+          "admin": admin,
           "avatar": user.photoURL,
         });
       } else {

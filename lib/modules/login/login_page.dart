@@ -41,29 +41,13 @@ class LoginPage extends StatelessWidget {
                   width: screenSize.width * .4,
                   child: Image.asset('assets/images/palmeiras.png'),
                 ),
-                /*  Center(
-                  child: SizedBox(
-                    width: screenSize.width * .8,
-                    height: screenSize.height * .05,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
-                      ),
-                      onPressed: () => {
-                        Modular.to.push(route)
-                      },
-                      child: const Text('Duba'),
-                    ),
-                  ),
-                ), */
-
                 Center(
                   child: SizedBox(
                     width: screenSize.width * .8,
                     height: 49,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
+                        backgroundColor: Colors.white,
                       ),
                       onPressed: () => {
                         controller.signIn(),
@@ -72,9 +56,7 @@ class LoginPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  height: 30,
-                ),
+                const SizedBox(height: 30),
                 BlocSelector<LoginController, LoginState, bool>(
                   bloc: controller,
                   selector: (state) => state.status == LoginStatus.loading,

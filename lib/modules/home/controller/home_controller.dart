@@ -17,6 +17,7 @@ class HomeController extends Cubit<HomeState> {
   final AuthService _authService;
   late String userName;
   late String? avatar;
+  late final bool _isAdmin;
 
   HomeController({
     required AuthService authService,
@@ -25,8 +26,11 @@ class HomeController extends Cubit<HomeState> {
         _authService = authService,
         super(HomeState.initial());
 
-  void setUser({required String user, String? photoURL}) {
+  bool get isAdmin => _isAdmin;
+
+  void setUser({required String user, required bool isAdmin, String? photoURL}) {
     userName = user;
+    _isAdmin = isAdmin;
     avatar = photoURL ?? '';
   }
 
