@@ -7,4 +7,6 @@ abstract class AdminRepository {
   Future<List<Time>> buscarTimes();
   Future<List<Campeonato>> buscarCampeonatos();
   Future<void> enviarDados({required PartidaModel partida});
+
+  eraseBets() {}
 }

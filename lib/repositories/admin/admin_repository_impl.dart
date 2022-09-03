@@ -60,4 +60,17 @@ class AdminRepositoryImpl implements AdminRepository {
       throw Exception();
     }
   }
+
+  @override
+  eraseBets() {
+    var database = _database.getInstance();
+    try {
+      if (database != null) {
+        var document = database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.APOSTAS);
+        document.set({});
+      }
+    } catch (e) {
+      throw Exception();
+    }
+  }
 }

@@ -39,7 +39,8 @@ class AdminController extends Cubit<AdminState> {
       required String campeonato,
       required String hora,
       required String data,
-      required int valorAposta}) async {
+      required int valorAposta,
+      bool eraseBets = false}) async {
     try {
       var partida = PartidaModel(
           mandante: mandante,
@@ -49,7 +50,7 @@ class AdminController extends Cubit<AdminState> {
           campeonato: campeonato,
           valorAposta: valorAposta);
 
-      _adminService.enviarDados(partida: partida);
+      _adminService.enviarDados(partida: partida, eraseBets: eraseBets);
       emit(state.copyWith(status: AdminStatus.success));
     } catch (e) {
       emit(state.copyWith(status: AdminStatus.failure));

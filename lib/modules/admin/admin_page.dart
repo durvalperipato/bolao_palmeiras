@@ -290,14 +290,37 @@ class _AdminPageState extends State<AdminPage> {
                       }); */
 
                       var formValid = _formKey.currentState?.validate() ?? false;
+
                       if (formValid) {
+                        bool eraseBets = await showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Deseja reiniciar as apostas?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => false,
+                                child: const Text('NÃO'),
+                              ),
+                              TextButton(
+                                onPressed: () => true,
+                                child: const Text(
+                                  'SIM',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
                         widget.controller.enviarDados(
-                            campeonato: campeonato,
-                            data: _dataEC.text,
-                            hora: _horaEC.text,
-                            mandante: timeMandante,
-                            visitante: timeVisitante,
-                            valorAposta: int.parse(_valorEC.text));
+                          campeonato: campeonato,
+                          data: _dataEC.text,
+                          hora: _horaEC.text,
+                          mandante: timeMandante,
+                          visitante: timeVisitante,
+                          valorAposta: int.parse(_valorEC.text),
+                          eraseBets: eraseBets,
+                        );
                       }
                     },
                     child: const Text(

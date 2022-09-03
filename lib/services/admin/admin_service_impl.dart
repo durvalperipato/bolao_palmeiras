@@ -1,7 +1,6 @@
+import 'package:bolao_palmeiras/app/models/campeonato_model.dart';
 import 'package:bolao_palmeiras/app/models/partida_model.dart';
 import 'package:bolao_palmeiras/app/models/time_model.dart';
-
-import 'package:bolao_palmeiras/app/models/campeonato_model.dart';
 
 import '../../repositories/admin/admin_repository.dart';
 import 'admin_service.dart';
@@ -9,8 +8,7 @@ import 'admin_service.dart';
 class AdminServiceImpl implements AdminService {
   final AdminRepository _adminRepository;
 
-  AdminServiceImpl({required AdminRepository adminRepository})
-      : _adminRepository = adminRepository;
+  AdminServiceImpl({required AdminRepository adminRepository}) : _adminRepository = adminRepository;
 
   @override
   Future<List<CampeonatoModel>> buscarCampeonatos() async {
@@ -35,7 +33,10 @@ class AdminServiceImpl implements AdminService {
   }
 
   @override
-  Future<void> enviarDados({required PartidaModel partida}) async {
+  Future<void> enviarDados({required PartidaModel partida, bool eraseBets = false}) async {
     await _adminRepository.enviarDados(partida: partida);
+    if (eraseBets) {
+      await _adminRepository.eraseBets();
+    }
   }
 }
