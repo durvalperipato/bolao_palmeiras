@@ -47,13 +47,16 @@ class AdminController extends Cubit<AdminState> {
           visitante: visitante,
           data: data,
           hora: hora,
-          campeonato: campeonato,
+          campeonato: campeonato.toUpperCase(),
           valorAposta: valorAposta);
 
       _adminService.enviarDados(partida: partida, eraseBets: eraseBets);
-      emit(state.copyWith(status: AdminStatus.success));
+      emit(state.copyWith(
+          status: AdminStatus.sent, message: 'Dados da partida enviados com sucesso'));
     } catch (e) {
-      emit(state.copyWith(status: AdminStatus.failure));
+      emit(state.copyWith(
+          status: AdminStatus.failure,
+          message: 'Não foi possível carregar os dados dos times e campeonatos'));
     }
   }
 

@@ -2,6 +2,7 @@ import 'package:bolao_palmeiras/app/models/campeonato_model.dart';
 import 'package:bolao_palmeiras/modules/admin/controller/admin_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 
 import '../../app/models/time_model.dart';
 
@@ -18,14 +19,10 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  String timeMandante = 'Palmeiras';
-  String timeVisitante = 'Flamengo';
-  String campeonato = 'Brasileiro';
-
-  String imageUrl =
-      "https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png";
-
   final _formKey = GlobalKey<FormState>();
+  String mandante = 'Palmeiras';
+  String visitante = 'Palmeiras';
+  String campeonato = 'Brasileiro';
 
   final TextEditingController _horaEC = TextEditingController();
   final TextEditingController _dataEC = TextEditingController();
@@ -50,15 +47,23 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     return BlocListener<AdminController, AdminState>(
       bloc: widget.controller,
-      listener: ((context, state) {
+      listener: (context, state) {
         if (state.status == AdminStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Não foi possível carregar os dados dos times e campeonatos'),
+            SnackBar(
+              content: Text(state.message ?? 'Erro desconhecido'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state.status == AdminStatus.sent) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message ?? 'Comando enviado com sucesso'),
+              backgroundColor: Colors.green,
             ),
           );
         }
-      }),
+      },
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Admin Page'),
@@ -74,7 +79,7 @@ class _AdminPageState extends State<AdminPage> {
                 children: [
                   BlocSelector<AdminController, AdminState, List<CampeonatoModel>>(
                       bloc: widget.controller,
-                      selector: ((state) => state.campeonatos),
+                      selector: (state) => state.campeonatos,
                       builder: (context, campeonatos) {
                         return Row(
                           children: [
@@ -95,17 +100,25 @@ class _AdminPageState extends State<AdminPage> {
                               child: DropdownButtonFormField(
                                   value: campeonato,
                                   items: campeonatos
-                                      .map((campeonato) => DropdownMenuItem(
-                                          value: campeonato.nome, child: Text(campeonato.nome)))
+                                      .map(
+                                        (campeonato) => DropdownMenuItem(
+                                          value: campeonato.nome,
+                                          child: Text(campeonato.nome),
+                                        ),
+                                      )
                                       .toList(),
-                                  onChanged: (value) {}),
+                                  onChanged: (String? value) {
+                                    if (value != null) {
+                                      campeonato = value;
+                                    }
+                                  }),
                             ),
                           ],
                         );
                       }),
                   BlocSelector<AdminController, AdminState, List<TimeModel>>(
                       bloc: widget.controller,
-                      selector: ((state) => state.times),
+                      selector: (state) => state.times,
                       builder: (context, times) {
                         return Row(
                           children: [
@@ -124,19 +137,28 @@ class _AdminPageState extends State<AdminPage> {
                             ),
                             Expanded(
                               child: DropdownButtonFormField(
-                                  value: timeMandante,
-                                  items: times
-                                      .map((time) => DropdownMenuItem(
-                                          value: time.nome, child: Text(time.nome)))
-                                      .toList(),
-                                  onChanged: (value) {}),
+                                value: mandante,
+                                items: times
+                                    .map(
+                                      (time) => DropdownMenuItem(
+                                        value: time.nome,
+                                        child: Text(time.nome),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (String? value) {
+                                  if (value != null) {
+                                    mandante = value;
+                                  }
+                                },
+                              ),
                             ),
                           ],
                         );
                       }),
                   BlocSelector<AdminController, AdminState, List<TimeModel>>(
                       bloc: widget.controller,
-                      selector: ((state) => state.times),
+                      selector: (state) => state.times,
                       builder: (context, times) {
                         return Row(
                           children: [
@@ -153,12 +175,16 @@ class _AdminPageState extends State<AdminPage> {
                             ),
                             Expanded(
                               child: DropdownButtonFormField(
-                                  value: timeVisitante,
+                                  value: visitante,
                                   items: times
                                       .map((time) => DropdownMenuItem(
                                           value: time.nome, child: Text(time.nome)))
                                       .toList(),
-                                  onChanged: (value) {}),
+                                  onChanged: (String? value) {
+                                    if (value != null) {
+                                      visitante = value;
+                                    }
+                                  }),
                             ),
                           ],
                         );
@@ -299,11 +325,15 @@ class _AdminPageState extends State<AdminPage> {
                             title: const Text('Deseja reiniciar as apostas?'),
                             actions: [
                               TextButton(
-                                onPressed: () => false,
+                                onPressed: () {
+                                  Modular.to.pop(false);
+                                },
                                 child: const Text('NÃO'),
                               ),
                               TextButton(
-                                onPressed: () => true,
+                                onPressed: () {
+                                  Modular.to.pop(true);
+                                },
                                 child: const Text(
                                   'SIM',
                                   style: TextStyle(color: Colors.red),
@@ -312,12 +342,13 @@ class _AdminPageState extends State<AdminPage> {
                             ],
                           ),
                         );
+
                         widget.controller.enviarDados(
                           campeonato: campeonato,
                           data: _dataEC.text,
                           hora: _horaEC.text,
-                          mandante: timeMandante,
-                          visitante: timeVisitante,
+                          mandante: mandante,
+                          visitante: visitante,
                           valorAposta: int.parse(_valorEC.text),
                           eraseBets: eraseBets,
                         );

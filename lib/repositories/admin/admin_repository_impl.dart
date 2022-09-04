@@ -62,12 +62,12 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  eraseBets() {
+  Future<void> eraseBets() async {
     var database = _database.getInstance();
     try {
       if (database != null) {
         var document = database.collection(DatabaseNames.BOLAO).doc(DatabaseNames.APOSTAS);
-        document.set({});
+        document.delete();
       }
     } catch (e) {
       throw Exception();
