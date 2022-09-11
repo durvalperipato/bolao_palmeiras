@@ -23,7 +23,7 @@ class EmptyState extends StatelessWidget {
                 height: 36,
               ),
               const Text(
-                'NENHUMA AP !',
+                'NENHUMA APOSTA REALIZADA!',
                 style: TextStyle(fontFamily: 'Antiga', fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20),
